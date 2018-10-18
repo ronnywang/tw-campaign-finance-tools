@@ -7,21 +7,21 @@ if (!is_dir($dir)) {
 
 include(__DIR__ . '/TableScanner.php');
 
-foreach (glob($dir . '/*.png') as $png_file) {
+foreach (array_merge(glob($dir . '/*.jpg'), glob($dir . '/*.png')) as $image_file) {
     clearstatcache(true);
-    if (file_exists("{$png_file}.json") and filesize("{$png_file}.json") < 10000) {
+    if (file_exists("{$image_file}.json") and filesize("{$image_file}.json") < 10000) {
 
         continue;
     }
-    if (strpos($png_file, '-debug.png')) {
+    if (strpos($image_file, '-debug.') or strpos($image_file, '-part')) {
         continue;
     }
-    touch("{$png_file}.json");
-    $title = basename($png_file);
+    touch("{$image_file}.json");
+    $title = basename($image_file);
     fwrite(STDERR, chr(27) . "k{$title}" . chr(27) . "\\");
-    error_log($png_file);
+    error_log($image_file);
     $scanner = new TableScanner;
-    list($obj, $gd)= $scanner->getCellsFromFile($png_file, true);
-    file_put_contents("{$png_file}.json", json_Encode($obj));
-    imagepng($gd, "{$png_file}-debug.png");
+    list($obj, $gd)= $scanner->getCellsFromFile($image_file, true);
+    file_put_contents("{$image_file}.json", json_Encode($obj));
+    imagepng($gd, "{$image_file}-debug.png");
 }

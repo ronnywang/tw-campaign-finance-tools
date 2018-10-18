@@ -189,7 +189,13 @@ class TableScanner
             throw new Exception("沒有輸入檔");
         }
 
-        $gd_ori = imagecreatefrompng($png_file);
+        if (strpos($png_file, '.png')) {
+            $gd_ori = imagecreatefrompng($png_file);
+        } else if (strpos($png_file, '.jpg')) {
+            $gd_ori = imagecreatefromjpeg($png_file);
+        } else {
+            
+        }
 
         // 先縮到最大邊 2000 ，加快速度
         $height = imagesy($gd_ori);
